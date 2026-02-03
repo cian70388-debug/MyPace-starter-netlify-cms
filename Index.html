@@ -1,0 +1,155 @@
+from zipfile import ZipFile
+from pathlib import Path
+
+base = Path("/mnt/data/mypace_offline_ui")
+base.mkdir(exist_ok=True)
+
+(base / "index.html").write_text("""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MyPace – Offline UI Review</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+
+  <!-- Bottom Nav -->
+  <nav class="nav">
+    <button onclick="go('dashboard')">Home</button>
+    <button onclick="go('progress')">Progress</button>
+    <button onclick="go('plan')">Plan</button>
+    <button onclick="go('settings')">Settings</button>
+  </nav>
+
+  <!-- Screens -->
+  <section class="screen active" id="dashboard">
+    <h1>MyPace</h1>
+    <div class="card">
+      <h2>Today</h2>
+      <p>Current pace: <strong>On track</strong></p>
+      <button onclick="go('plan')">View Plan</button>
+    </div>
+  </section>
+
+  <section class="screen" id="progress">
+    <h1>Progress</h1>
+    <div class="card">
+      <p>Weekly consistency</p>
+      <div class="bar"></div>
+    </div>
+  </section>
+
+  <section class="screen" id="plan">
+    <h1>Your Plan</h1>
+    <div class="card">
+      <p>Step 1 – Focus</p>
+      <p>Step 2 – Execute</p>
+      <p>Step 3 – Review</p>
+    </div>
+  </section>
+
+  <section class="screen" id="settings">
+    <h1>Settings</h1>
+    <div class="card">
+      <p>Notifications</p>
+      <p>Pace sensitivity</p>
+      <p>Reset cycle</p>
+    </div>
+  </section>
+
+<script src="app.js"></script>
+</body>
+</html>
+""")
+
+(base / "styles.css").write_text("""
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #f2f3f5;
+  color: #111;
+  padding-bottom: 72px;
+}
+
+.screen {
+  display: none;
+  padding: 1.5rem;
+}
+
+.screen.active {
+  display: block;
+}
+
+h1 {
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+}
+
+.card {
+  background: #fff;
+  padding: 1rem;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.bar {
+  height: 10px;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #4caf50 70%, #ddd 70%);
+  margin-top: 0.5rem;
+}
+
+.nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: #fff;
+  border-top: 1px solid #ddd;
+}
+
+.nav button {
+  padding: 0.75rem;
+  font-size: 0.85rem;
+  border: none;
+  background: none;
+}
+""")
+
+(base / "app.js").write_text("""
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s =>
+    s.classList.remove('active')
+  );
+  document.getElementById(id).classList.add('active');
+}
+""")
+
+(base / "README.txt").write_text("""
+MYPACE – OFFLINE UI REVIEW BUILD
+
+Purpose:
+- Review MyPace UI and navigation offline
+- Identify layout, flow, and clarity issues
+- No backend, no data, no internet
+
+Use:
+1. Unzip folder
+2. Open index.html on your phone
+3. Tap through screens
+
+Change text, spacing, or layout freely to test improvements.
+""")
+
+zip_path = "/mnt/data/mypace_offline_ui.zip"
+with ZipFile(zip_path, "w") as z:
+    for file in base.iterdir():
+        z.write(file, arcname=file.name)
+
+zip_path
